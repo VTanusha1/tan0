@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Campus Cloud File Cache Simulator | LFU + LRU</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>Campus Cloud File Cache Simulator</h1>
+      <p>O(1) LFU Eviction with LRU Tie-Breaking via Hash Maps &amp; Doubly Linked Lists</p>
+    </div>
+    <div class="badge-group">
+      <span class="badge" id="capBadge">Capacity: 2</span>
+      <span class="badge" id="sizeBadge">Used: 0 / 2</span>
+      <span class="badge accent" id="minFreqBadge">min_freq: 0</span>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- Left Column: Controls & Quick Scenarios -->
+    <section class="panel controls-panel">
+      <h2>1. Cache Configuration</h2>
+      <div class="input-row">
+        <input type="number" id="capacityInput" min="0" max="200" value="2" placeholder="Capacity (0-200)" />
+        <button class="btn primary" onclick="handleSetCapacity()">Set Capacity</button>
+      </div>
+
+      <h2>2. File Operations</h2>
+      <div class="input-group">
+        <label>PUT(key, value)</label>
+        <div class="input-row">
+          <input type="text" id="putKey" placeholder="Key (e.g. A)" maxlength="24" />
+          <input type="text" id="putVal" placeholder="Value (e.g. 10)" maxlength="24" />
+          <button class="btn success" onclick="handlePut()">PUT</button>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>GET(key)</label>
+        <div class="input-row">
+          <input type="text" id="getKey" placeholder="Key (e.g. A)" maxlength="24" />
+          <button class="btn info" onclick="handleGet()">GET</button>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <button class="btn warning" onclick="handleStateReport()">Request STATE Report</button>
+        <button class="btn secondary" onclick="resetCurrentCache()">Clear Cache</button>
+      </div>
+
+      <h2>3. Demo &amp; Edge-Case Suites</h2>
+      <p class="hint">Click any scenario to run and verify required deliverables:</p>
+      <div class="preset-grid">
+        <button class="btn outline" onclick="runIllustrativeDemo()">Illustrative Example</button>
+        <button class="btn outline" onclick="runTieBreakerTest()">Test: Frequency Ties</button>
+        <button class="btn outline" onclick="runUpdateMissTest()">Test: Updates &amp; Misses</button>
+        <button class="btn outline" onclick="runZeroCapacityTest()">Test: Zero Capacity</button>
+      </div>
+
+      <h2>4. Live Cache Analytics</h2>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <span class="stat-val" id="statHits">0</span>
+          <span class="stat-lbl">GET Hits</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-val" id="statMisses">0</span>
+          <span class="stat-lbl">GET Misses</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-val" id="statEvictions">0</span>
+          <span class="stat-lbl">Evictions</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-val" id="statHitRate">0%</span>
+          <span class="stat-lbl">Hit Rate</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Center Column: Doubly Linked List Visualizer -->
+    <section class="panel visualizer-panel">
+      <div class="panel-header">
+        <h2>Frequency Buckets (Doubly Linked Lists)</h2>
+        <div class="legend">
+          <span class="legend-item"><i class="dot mru"></i> MRU (Head)</span>
+          <span class="legend-item"><i class="dot evict"></i> Next to Evict (LRU Tail)</span>
+        </div>
+      </div>
+
+      <div id="bucketsContainer" class="buckets-container">
+        <div class="empty-state">Cache is empty. Use PUT(key, value) or run a demo preset.</div>
+      </div>
+
+      <!-- On-Demand STATE Report Box -->
+      <div class="state-box">
+        <div class="state-header">
+          <h3>On-Demand STATE Report</h3>
+          <span class="muted">Shown only when requested</span>
+        </div>
+        <pre id="stateOutput">Click "Request STATE Report" to inspect cached keys and access counts.</pre>
+      </div>
+    </section>
+
+    <!-- Right Column: Operation & Eviction Audit Log -->
+    <section class="panel log-panel">
+      <div class="panel-header">
+        <h2>Operation &amp; Eviction Log</h2>
+        <button class="btn small secondary" onclick="clearLogs()">Clear</button>
+      </div>
+      <div id="logContainer" class="log-container"></div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
